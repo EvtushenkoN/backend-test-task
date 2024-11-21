@@ -44,6 +44,9 @@ migrate-up:
 fixtures:
 	${DC_EXEC} bash -c "php bin/console doctrine:fixtures:load --no-interaction"
 
+unit-tests:
+	${DC_EXEC} bash -c "php bin/phpunit"
+
 success-message:
 	@echo "You can now access the application at http://localhost:8337"
 	@echo "Good luck! 🚀"
