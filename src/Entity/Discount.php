@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: DiscountRepository::class)]
 class Discount
 {
+    public const TYPE_FLAT = false;
+    public const TYPE_PERCENT = true;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

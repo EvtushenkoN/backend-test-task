@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Validator as CustomAssert;
 
 class CalculatePriceDto
 {
@@ -13,6 +14,7 @@ class CalculatePriceDto
     private $product;
     #[Assert\NotBlank(message: "Taxnumber should`t be empty")]
     #[Assert\Type(type: "string", message: "Taxnumber should be string")]
+    #[CustomAssert\TaxNumberConstraint]
     private $taxNumber;
     #[Assert\NotBlank(message: "Couponcode should`t be empty")]
     #[Assert\Type(type: "string", message: "Couponcode should be string")]
