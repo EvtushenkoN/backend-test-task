@@ -16,6 +16,13 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function findByIdOrFail($productId) {
+        $product = $this->findOneBy(["id" => $productId]);
+        if (!$product) {
+            throw new \Exception("Incorrect product id");
+        }
+        return $product;
+    }
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

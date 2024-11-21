@@ -16,6 +16,13 @@ class DiscountRepository extends ServiceEntityRepository
         parent::__construct($registry, Discount::class);
     }
 
+    public function findByCodeOrFail($code) {
+        $discount = $this->findOneBy(["code" => $code]);
+        if (!$discount) {
+            throw new \Exception("Discount coupon not found");
+        }
+        return $discount;
+    }
     //    /**
     //     * @return Discount[] Returns an array of Discount objects
     //     */

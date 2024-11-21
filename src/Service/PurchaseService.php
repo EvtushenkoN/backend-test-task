@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Dto\CalculatePriceDto;
+use App\Dto\MakePurchaseDto;
 use App\Entity\Country;
 use App\Entity\Discount;
 use App\Entity\Product;
@@ -16,27 +17,37 @@ class PurchaseService
         private readonly ProductRepository $productRepository,
         private readonly CountryRepository $countryRepository,
         private readonly DiscountRepository $discountRepository,
+        private readonly PaymentsService $paymentsService,
     ) {}
 
     public function calculatePrice(CalculatePriceDto $calculatePriceDto) {
-        $product = $this->productRepository->findOneBy(["id" => $calculatePriceDto->getProduct()]);
-        if (!$product) {
-            throw new \Exception("Incorrect product id");
-        }
-        $prefix = substr($calculatePriceDto->getTaxNumber(), 0, 2);
-        $country = $this->countryRepository->findOneBy(["prefix" => $prefix]);
-        if (!$country) {
-            throw new \Exception("Tax number for non-existent country");
-        }
+        $country = $this->countryRepository->findByTaxNumberOrFail($calculatePriceDto->getTaxNumber());
+        $product = $this->productRepository->findByIdOrFail($calculatePriceDto->getProduct());
         $discount = null;
         if ($calculatePriceDto->getCouponCode()) {
-            $discount = $this->discountRepository->findOneBy(["code" => $calculatePriceDto->getCouponCode()]);
-            if (!$discount) {
-                throw new \Exception("Discount coupon not found");
-            }
+            $discount = $this->discountRepository->findByCodeOrFail($calculatePriceDto->getCouponCode());
         }
 
         return $this->getPrice($product, $country, $discount);
+    }
+
+    public function makePurchase(MakePurchaseDto $makePurchaseDto) {
+        $country = $this->countryRepository->findByTaxNumberOrFail($makePurchaseDto->getTaxNumber());
+        $product = $this->productRepository->findByIdOrFail($makePurchaseDto->getProduct());
+        $discount = null;
+        if ($makePurchaseDto->getCouponCode()) {
+            $discount = $this->discountRepository->findByCodeOrFail($makePurchaseDto->getCouponCode());
+        }
+
+        $price = $this->getPrice($product, $country, $discount);
+        $paymentProcessor = $makePurchaseDto->getPaymentProcessor();
+        $result = $this->paymentsService->$paymentProcessor($price);
+
+        if ($result != "success") {
+            throw new \Exception("Payment system error: " . $result);
+        }
+
+        return $price;
     }
 
     private function getPrice(Product $product, Country $country, ?Discount $discount) {

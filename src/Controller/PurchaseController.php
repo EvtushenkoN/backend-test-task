@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\CalculatePriceDto;
+use App\Dto\MakePurchaseDto;
 use App\Service\PurchaseService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -40,4 +41,28 @@ class PurchaseController extends AbstractController
             );
         }
     }
+
+    #[Route('/purchase', name: 'make_purchase', methods: ['POST'])]
+    public function makePurchase(Request $request): JsonResponse
+    {
+        try {
+            $makePurchaseDto = MakePurchaseDto::hydrate(json_decode($request->getContent(), true));
+            $makePurchaseDto->validate($this->validator);
+
+            $price = $this->purchaseService->makePurchase($makePurchaseDto);
+            return $this->json([
+                'success' => true,
+                'price' => $price,
+            ]);
+        } catch (\Throwable $exception) {
+            return $this->json(
+                data: [
+                    "success" => false,
+                    "error" => $exception->getMessage(),
+                ],
+                status: Response::HTTP_BAD_REQUEST
+            );
+        }
+    }
+
 }

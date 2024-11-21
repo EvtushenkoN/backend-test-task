@@ -16,6 +16,14 @@ class CountryRepository extends ServiceEntityRepository
         parent::__construct($registry, Country::class);
     }
 
+    public function findByTaxNumberOrFail($taxNumber) {
+        $prefix = substr($taxNumber, 0, 2);
+        $country = $this->findOneBy(["prefix" => $prefix]);
+        if (!$country) {
+            throw new \Exception("Tax number for non-existent country");
+        }
+        return $country;
+    }
     //    /**
     //     * @return Country[] Returns an array of Country objects
     //     */
