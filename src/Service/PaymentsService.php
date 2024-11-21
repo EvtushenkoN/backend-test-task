@@ -2,32 +2,28 @@
 
 namespace App\Service;
 
+use App\Exception\PaymentSystemException;
 use Systemeio\TestForCandidates\PaymentProcessor\PaypalPaymentProcessor;
 use Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor;
 
 class PaymentsService
 {
-    public function paypal(float $price): string
+    public function paypal(float $price): bool
     {
         $paypalPaymentProcessor = new PaypalPaymentProcessor();
-        try {
-            $paypalPaymentProcessor->pay($price);
-        } catch (\Throwable $exception) {
-            // We can alter error messages if we don't want the user to know responses from payment systems
-            return $exception->getMessage();
-        }
-        return "success";
+        $paypalPaymentProcessor->pay($price);
+        return true;
     }
 
-    public function stripe(float $price): string
+    public function stripe(float $price): bool
     {
         $stripePaymentProcessor = new StripePaymentProcessor();
         if ($price < 100) {
-            return "Price must be greater or equal to 100";
+            throw new PaymentSystemException("Price for stripe payment processor must be greater than 100");
         }
         if (!$stripePaymentProcessor->processPayment($price)) {
-            return "Unspecified payment system error";
+            throw new PaymentSystemException("Unspecified payment processor error");
         }
-        return "success";
+        return true;
     }
 }

@@ -41,11 +41,7 @@ class PurchaseService
 
         $price = $this->getPrice($product, $country, $discount);
         $paymentProcessor = $makePurchaseDto->getPaymentProcessor();
-        $result = $this->paymentsService->$paymentProcessor($price);
-
-        if ($result != "success") {
-            throw new \Exception("Payment system error: " . $result);
-        }
+        $this->paymentsService->$paymentProcessor($price);
 
         return $price;
     }
