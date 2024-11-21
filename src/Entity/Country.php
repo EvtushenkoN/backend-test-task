@@ -22,6 +22,9 @@ class Country
     #[ORM\Column(length: 255)]
     private ?string $taxNumberFormat = null;
 
+    #[ORM\Column(length: 2)]
+    private ?string $prefix = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +62,17 @@ class Country
     public function setTaxNumberFormat(string $taxNumberFormat): static
     {
         $this->taxNumberFormat = $taxNumberFormat;
+
+        return $this;
+    }
+    public function getPrefix(): ?string
+    {
+        return $this->prefix;
+    }
+
+    public function setPrefix(string $prefix): static
+    {
+        $this->prefix = $prefix;
 
         return $this;
     }

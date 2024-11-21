@@ -23,30 +23,35 @@ class CountryFixture extends Fixture
                 "name" => "Germany",
                 "tax" => 19,
                 "tax_number_format" => "^DE[0-9]{9}$",
+                "prefix" => "DE",
             ],
             [
                 "name" => "Italy",
                 "tax" => 22,
                 "tax_number_format" => "^IT[0-9]{11}$",
+                "prefix" => "IT",
             ],
             [
                 "name" => "France",
                 "tax" => 20,
                 "tax_number_format" => "^FR[A-Z]{2}[0-9]{9}$",
+                "prefix" => "FR",
             ],
             [
                 "name" => "Greece",
                 "tax" => 24,
                 "tax_number_format" => "^GR[0-9]{9}$",
+                "prefix" => "GR",
             ],
         ];
     }
 
     private function getCountry(array $data): Country {
-        $discount = new Country();
-        $discount->setName($data['name']);
-        $discount->setTax($data['tax']);
-        $discount->setTaxNumberFormat($data['tax_number_format']);
-        return $discount;
+        $country = new Country();
+        $country->setName($data['name']);
+        $country->setTax($data['tax']);
+        $country->setPrefix($data['prefix']);
+        $country->setTaxNumberFormat($data['tax_number_format']);
+        return $country;
     }
 }

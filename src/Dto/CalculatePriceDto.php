@@ -16,7 +16,6 @@ class CalculatePriceDto
     #[Assert\Type(type: "string", message: "Taxnumber should be string")]
     #[CustomAssert\TaxNumberConstraint]
     private $taxNumber;
-    #[Assert\NotBlank(message: "Couponcode should`t be empty")]
     #[Assert\Type(type: "string", message: "Couponcode should be string")]
     private $couponCode;
 
@@ -41,7 +40,7 @@ class CalculatePriceDto
     {
         return $this->taxNumber;
     }
-    public function getCouponCode(): string
+    public function getCouponCode(): string|null
     {
         return $this->couponCode;
     }
